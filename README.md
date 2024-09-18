@@ -1,6 +1,4 @@
-以下是一个简单的 `README.md` 文档模板，包含你需要的内容：
 
-```markdown
 # Douyin API
 
 ## 简介
