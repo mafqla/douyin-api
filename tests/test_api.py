@@ -44,6 +44,13 @@ class TestCase(unittest.TestCase):
         print('Hot list value:')
         pprint(res.get_json())
 
+    # 测试/aweme/v1/web/api/suggest_words/
+    def test_get_suggest_words(self):
+        res = self.client.get('/aweme/v1/web/api/suggest_words/?query=雍华盛会警察到九楼后续&count=8')
+        self.assertEqual(res.status_code, 200)
+        print('suggest_words value:')
+        pprint(res.get_json())
+
 
 if __name__ == '__main__':
     unittest.main()

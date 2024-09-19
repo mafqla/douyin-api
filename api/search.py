@@ -87,3 +87,28 @@ def get_search():
         return jsonify(search_data)
     else:
         return jsonify({'error': 'Failed to retrieve search_data; Check you Cookie and Referer!'}), 403
+
+
+'''
+@desc: 获取推荐词
+@url: '/aweme/v1/web/api/suggest_words/'
+@param: query 查询词
+@param: count 数量
+'''
+
+
+@api.route('/api/suggest_words/')
+def get_suggest_words():
+    query = request.args.get('query')
+    count = request.args.get('count')
+    url = '/aweme/v1/web/api/suggest_words/'
+    params = {
+        'query': query,
+        'count': count,
+        'business_id': '30068'
+    }
+    suggest_words = request_instance.getJSON(url, params)
+    if suggest_words:
+        return jsonify(suggest_words)
+    else:
+        return jsonify({'error': 'Failed to retrieve suggest_words; Check you Cookie and Referer!'}), 403
