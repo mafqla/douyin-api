@@ -94,6 +94,7 @@ def get_search():
 @url: '/aweme/v1/web/api/suggest_words/'
 @param: query 查询词
 @param: count 数量
+@param: from_group_id 从视频信息中获取
 '''
 
 
@@ -101,12 +102,17 @@ def get_search():
 def get_suggest_words():
     query = request.args.get('query')
     count = request.args.get('count')
+    from_group_id = request.args.get('from_group_id')
     url = '/aweme/v1/web/api/suggest_words/'
     params = {
-        'query': query,
         'count': count,
         'business_id': '30068'
     }
+    if from_group_id is not None and from_group_id != '':
+        params['from_group_id'] = from_group_id
+    if query is not None and query != '':
+        params['query'] = query
+
     suggest_words = request_instance.getJSON(url, params)
     if suggest_words:
         return jsonify(suggest_words)

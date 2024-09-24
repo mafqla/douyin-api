@@ -21,6 +21,7 @@ from utils.execjs_fix import execjs
 
 class Request(object):
     HOST = 'https://www.douyin.com'
+    LIVE_HOST = 'https://live.douyin.com'
     PARAMS = {
         'device_platform': 'webapp',
         'aid': '6383',
@@ -141,8 +142,9 @@ class Request(object):
             return ''
         return response.text
 
-    def getJSON(self, uri: str, params: dict, data: dict = None):
+    def getJSON(self, uri: str, params: dict, data: dict = None, live=None):
         url = f'{self.HOST}{uri}'
+        live_url = f'{self.LIVE_HOST}{uri}'
         params = self.get_params(params)
         params["a_bogus"] = self.get_sign(uri, params)
         # 这个接口必须更改referer的值为当前请求页面的url
@@ -175,6 +177,9 @@ class Request(object):
             response = requests.post(
                 url, params=params, data=data, headers=self.HEADERS, cookies=self.COOKIES)
             # print(f'url:{response.url}, header:{self.HEADERS}')
+        elif live:
+            response = requests.get(
+                live_url, params=params, headers=self.HEADERS, cookies=self.COOKIES)
         else:
             response = requests.get(
                 url, params=params, headers=self.HEADERS, cookies=self.COOKIES)

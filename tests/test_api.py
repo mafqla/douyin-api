@@ -51,6 +51,20 @@ class TestCase(unittest.TestCase):
         print('suggest_words value:')
         pprint(res.get_json())
 
+    # 测试/aweme/v1/web/tab/feed/
+    def test_get_tab_feed(self):
+        res = self.client.get('/aweme/v1/web/tab/feed/?&count=10&refresh_index=1')
+        self.assertEqual(res.status_code, 200)
+        print('tab_feed value:')
+        pprint(res.get_json())
+
+    # '/aweme/v1/web/user/profile/self/'
+    def test_get_user_info_self(self):
+        res = self.client.get('/aweme/v1/web/user/profile/self/')
+        self.assertEqual(res.status_code, 200)
+        print('user value:')
+        pprint(res.get_json())
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -112,3 +112,26 @@ def get_reply_list():
     else:
         api.logger.error('Failed to retrieve comment list for aweme_id: %s url: %s', item_id, url)
         return jsonify({'error': 'Failed to retrieve comment list; Check you Cookie!'}), 404
+
+
+'''
+@desc: 获取推荐页feed
+@url: /aweme/v1/web/tab/feed/
+'''
+
+
+@api.route('/web/tab/feed/')
+def get_tab_feed():
+    count = request.args.get('count')
+    refresh_index = request.args.get('refresh_index')
+    params = {"count": count,
+              'video_type_select': '1',
+              "aweme_pc_rec_raw_data": '{"is_client":false,"ff_danmaku_status":1,"danmaku_switch_status":1,'
+                                       '"is_auto_play":0,"is_full_screen":0,"is_full_webscreen":0,"is_mute":0,'
+                                       '"is_speed":1,"is_visible":1,"related_recommend":1}',
+              "refresh_index": refresh_index
+              }
+    url = '/aweme/v1/web/tab/feed/'
+    aweme_list = request_instance.getJSON(url, params)
+    if aweme_list:
+        return jsonify(aweme_list)

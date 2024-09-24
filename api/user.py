@@ -3,9 +3,27 @@ from utils.request import Request
 from flask import request, jsonify
 
 request_instance = Request()  # 创建 Request 类的实例
+'''
+@desc: 获取用户个人的信息
+@url: '/aweme/v1/web/user/profile/self/'
+'''
+
+
+@api.route('/user/profile/self/')
+def get_user_info_self():
+    url = '/aweme/v1/web/user/profile/self/'
+    params = {
+
+    }
+    user_info = request_instance.getJSON(url, params)
+    if user_info:
+        return jsonify(user_info)
+    else:
+        return jsonify({'error': 'Failed to retrieve userinfo; Check you Cookie and Referer!'}), 403
+
 
 """
-@desc: 获取用户信息
+@desc: 获取其他用户信息
 @url: /aweme/v1/web/user/profile/other/
 """
 
