@@ -173,7 +173,14 @@ class Request(object):
                 self.HEADERS['referer'] = referer_value
                 break
         if data:
+            bd_client_data = self.COOKIES.get("bd_ticket_guard_client_data", None)
             self.HEADERS["Content-Type"] = "application/x-www-form-urlencoded"
+            # self.HEADERS["Bd-Ticket-Guard-Client-Data"] = bd_client_data
+            # self.HEADERS["Bd-Ticket-Guard-Web-Version"] = '1'
+            # self.HEADERS["Bd-Ticket-Guard-Version"] = '2'
+            # self.HEADERS["Bd-Ticket-Guard-Iteration-Version"] = '1'
+            self.HEADERS["X-Secsdk-Csrf-Token"] = ''
+            print(data)
             response = requests.post(
                 url, params=params, data=data, headers=self.HEADERS, cookies=self.COOKIES)
             # print(f'url:{response.url}, header:{self.HEADERS}')
@@ -184,11 +191,10 @@ class Request(object):
             response = requests.get(
                 url, params=params, headers=self.HEADERS, cookies=self.COOKIES)
             # print(f'url:{response.url}, header:{self.HEADERS}')
-        if response.status_code != 200 or response.text == '' or response.json().get('status_code', 0) != 0:
+        if response.status_code != 200 or response.text == '':
             logger.error(
                 f'JSON请求失败：url: {url},  params: {params},header: {self.HEADERS}, code: {response.status_code}, body: {response.text}')
             return {}
-
         return response.json()
 
 

@@ -135,3 +135,36 @@ def get_tab_feed():
     aweme_list = request_instance.getJSON(url, params)
     if aweme_list:
         return jsonify(aweme_list)
+
+
+"""
+@desc: 用户点赞
+@url: /aweme/v1/web/commit/item/digg/
+@param: aweme_id 视频id 必须
+@param: type 点赞类型 1 点赞 0 取消
+@param： item_type 暂未知道含义 默认为0 
+"""
+
+
+@api.route('/commit/item/digg/')
+def post_digg():
+    aweme_id = request.args.get('aweme_id')
+    digg_type = request.args.get('type')
+    item_type = request.args.get('item_type')
+
+    url = '/aweme/v1/web/commit/item/digg/'
+    params = {
+
+    }
+    data = {
+        'aweme_id': aweme_id,
+        'type': digg_type,
+        'item_type': item_type
+    }
+    commit_digg = request_instance.getJSON(url, params, data)
+    if commit_digg:
+        return jsonify(commit_digg)
+    # else:
+    #     return jsonify({'error': 'Failed to retrieve  collection_list; Check you Cookie and Referer!'}), 403
+
+

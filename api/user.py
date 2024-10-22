@@ -49,7 +49,12 @@ def get_user_info():
 @desc: 获取用户作品列表
 @url：/aweme/v1/web/aweme/post/
 @param: forward_end_cursor 上一个接口的max_cursor 
-@param: max_cursor
+@param: sec_user_id 用户id
+@param: max_cursor 游标
+@param: count 每页数量
+@param: locate_item_id 视频id
+@param: need_time_list 是否需要时间列表 0 | 1
+@param: locate_query 是否定位 默认 false
 """
 
 
@@ -58,22 +63,30 @@ def get_user_post():
     sec_user_id = request.args.get('sec_user_id')
     count = request.args.get('count')
     max_cursor = request.args.get('max_cursor')
+    locate_item_id = request.args.get('locate_item_id')
+    need_time_list = request.args.get('need_time_list')
+    locate_query = request.args.get('locate_query')
+    forward_end_cursor = request.args.get('forward_end_cursor')
     url = '/aweme/v1/web/aweme/post/'
     params = {
         'sec_user_id': sec_user_id,
         'count': count,
         'max_cursor': max_cursor,
-        'locate_query': 'false',
+        'locate_item_id': locate_item_id,
+        'locate_query': locate_query,
         'show_live_replay_strategy': '1',
-        'need_time_list': '1',
+        'need_time_list': need_time_list,
         'time_list_query': '0',
         'publish_video_strategy_type': '2'
     }
+    if forward_end_cursor:
+        params["forward_end_cursor"] = forward_end_cursor
+
     post_list = request_instance.getJSON(url, params)
     if post_list:
         return jsonify(post_list)
     else:
-        return jsonify({'error': 'Failed to retrieve post_list; Check you Cookie and Referer!'}), 404
+        return jsonify({'error': 'Failed to retrieve post_list; Check you Cookie and Referer!'}), 403
 
 
 """
@@ -100,11 +113,11 @@ def get_user_favorite():
     if favorite_list:
         return jsonify(favorite_list)
     else:
-        return jsonify({'error': 'Failed to retrieve favorite_list; Check you Cookie and Referer!'}), 404
+        return jsonify({'error': 'Failed to retrieve favorite_list; Check you Cookie and Referer!'}), 403
 
 
 """
-@desc: 获取用户收藏列表
+@desc: 获取用户收藏视频列表
 @url： /aweme/v1/web/aweme/listcollection/
 """
 
@@ -126,7 +139,7 @@ def get_list_collection():
     if collection_list:
         return jsonify(collection_list)
     else:
-        return jsonify({'error': 'Failed to retrieve  collection_list; Check you Cookie and Referer!'}), 404
+        return jsonify({'error': 'Failed to retrieve  collection_list; Check you Cookie and Referer!'}), 403
 
 
 """
@@ -255,6 +268,9 @@ def get_list_collection_series():
 """
 @desc: 用户创建的合集
 @url: /aweme/v1/web/mix/list/
+@param: sec_user_id 用户sec_id
+@param: count 数量
+@param：cursor 游标
 """
 
 
@@ -275,7 +291,32 @@ def get_mix_list():
     if mix_list:
         return jsonify(mix_list)
     else:
-        return jsonify({'error': 'Failed to retrieve  mix_list; Check you Cookie and Referer!'}), 404
+        return jsonify({'error': 'Failed to retrieve  mix_list; Check you Cookie and Referer!'}), 403
+
+
+"""
+@desc: 合集的详细信息
+@url: /aweme/v1/web/mix/aweme/
+"""
+
+
+@api.route('/mix/aweme/')
+def get_mix_list_detail():
+    mix_id = request.args.get('mix_id')
+    count = request.args.get('count')
+    cursor = request.args.get('cursor')
+
+    url = '/aweme/v1/web/mix/aweme/'
+    params = {
+        'mix_id': mix_id,
+        'count': count,
+        'cursor': cursor,
+    }
+    mix_list_detail = request_instance.getJSON(url, params)
+    if mix_list_detail:
+        return jsonify(mix_list_detail)
+    else:
+        return jsonify({'error': 'Failed to retrieve  mix_list_detail; Check you Cookie and Referer!'}), 403
 
 
 """
@@ -287,19 +328,74 @@ def get_mix_list():
 @api.route('/history/read/')
 def get_history_read():
     count = request.args.get('count')
-    cursor = request.args.get('cursor')
+    max_cursor = request.args.get('max_cursor')
 
     url = '/aweme/v1/web/history/read/'
     params = {
         'count': count,
-        'cursor': cursor
+        'max_cursor': max_cursor
     }
     history_read = request_instance.getJSON(url, params)
     if history_read:
         return jsonify(history_read)
     else:
-        return jsonify({'error': 'Failed to retrieve  history_read; Check you Cookie and Referer!'}), 404
+        return jsonify({'error': 'Failed to retrieve  history_read; Check you Cookie and Referer!'}), 403
 
+
+"""
+@desc:获取用户的观看的影视综记录
+@url: /aweme/v1/web/lvideo/query/history/
+"""
+
+
+@api.route('/lvideo/query/history/')
+def get_lvideo_history_read():
+    count = request.args.get('count')
+    cursor = request.args.get('cursor')
+
+    url = '/aweme/v1/web/lvideo/query/history/'
+    params = {
+        'count': count,
+        'cursor': cursor
+    }
+    lvideo_history = request_instance.getJSON(url, params)
+    if lvideo_history:
+        return jsonify(lvideo_history)
+    else:
+        return jsonify({'error': 'Failed to retrieve  history_read; Check you Cookie and Referer!'}), 403
+
+
+"""
+@desc: 获取用户观看的直播记录
+@url:/webcast/feed/
+"""
+
+
+@api.route('/webcast/feed/')
+def get_webcast_history_read():
+    max_time = request.args.get('max_time')
+
+    url = '/webcast/feed/'
+    params = {
+        'max_time': max_time,
+        'live_id': 1,
+        'source_key': 'drawer_hot_live_history',
+        'need_map': 1
+    }
+    webcast_history = request_instance.getJSON(url, params)
+    if webcast_history:
+        return jsonify(webcast_history)
+    else:
+        return jsonify({'error': 'Failed to retrieve  history_read; Check you Cookie and Referer!'}), 403
+
+
+"""
+@desc: 上传历史记录
+@url: /aweme/v1/web/history/write/
+@param: aweme_id
+@param: author_id(不是sec_id)
+@method: post
+"""
 
 """
 @desc: 获取用户关系列表
@@ -325,7 +421,7 @@ def get_relation():
     if relation:
         return jsonify(relation)
     else:
-        return jsonify({'error': 'Failed to retrieve relation; Check you Cookie and Referer!'}), 404
+        return jsonify({'error': 'Failed to retrieve relation; Check you Cookie and Referer!'}), 403
 
 
 """
@@ -361,7 +457,7 @@ def get_user_following():
     if following_list:
         return jsonify(following_list)
     else:
-        return jsonify({'error': 'Failed to retrieve following_list; Check you Cookie and Referer!'}), 404
+        return jsonify({'error': 'Failed to retrieve following_list; Check you Cookie and Referer!'}), 403
 
 
 """
@@ -396,7 +492,7 @@ def get_user_follower():
     if follower_list:
         return jsonify(follower_list)
     else:
-        return jsonify({'error': 'Failed to retrieve follower_list; Check you Cookie and Referer!'}), 404
+        return jsonify({'error': 'Failed to retrieve follower_list; Check you Cookie and Referer!'}), 403
 
 
 """
@@ -433,3 +529,62 @@ def get_search_item():
         return jsonify(search_item)
     else:
         return jsonify({'error': 'Failed to retrieve search_item; Check you Cookie and Referer!'}), 404
+
+
+'''
+@desc: 添加收藏
+@url: /aweme/v1/web/aweme/collect/
+@method: post
+@data： action: 1
+@data： aweme_id: 7422146115929247036
+@data： aweme_type: 0
+'''
+
+'''
+@desc: 添加收藏到特定的收藏夹
+@url: /aweme/v1/web/collects/video/move/
+@method: post
+@params： collects_name: 草
+@params： item_ids: 7422146115929247036
+@params：item_type: 2
+@params： move_collects_list: 7417883349374637865
+@params：to_collects_id: 7417883349374637865
+'''
+
+'''
+@desc: 用户关注的人的视频
+@url: /aweme/v1/web/follow/feed/
+@param: cursor  开始为0 下一次为接口返回的cursor
+@param： level 1
+@param： count 默认20
+@param： pull_type 18
+@param: refresh_type 18
+@param: aweme_ids 默认为空
+@param: room_ids 默认为空
+'''
+
+
+@api.route('/follow/feed/')
+def get_follow_feed():
+    cursor = request.args.get('cursor')
+    level = request.args.get('level')
+    count = request.args.get('count')
+    pull_type = request.args.get('pull_type')
+    refresh_type = request.args.get('refresh_type')
+    aweme_ids = request.args.get('aweme_ids')
+    room_ids = request.args.get('room_ids')
+    url = '/aweme/v1/web/user/follower/list/'
+    params = {
+        'cursor': cursor,
+        'level': level,
+        'count': count,
+        'pull_type': pull_type,
+        'refresh_type': refresh_type,
+        'aweme_ids': aweme_ids,
+        'room_ids': room_ids,
+    }
+    follower_list = request_instance.getJSON(url, params)
+    if follower_list:
+        return jsonify(follower_list)
+    else:
+        return jsonify({'error': 'Failed to retrieve follower_list; Check you Cookie and Referer!'}), 403

@@ -65,6 +65,20 @@ class TestCase(unittest.TestCase):
         print('user value:')
         pprint(res.get_json())
 
+    # '/aweme/v1/web/aweme/listcollection/
+    def test_post_listcollection(self):
+        res = self.client.get('/aweme/v1/web/aweme/listcollection/?count=10&cursor=0')
+        self.assertEqual(res.status_code, 200)
+        print('commit value:')
+        pprint(res.get_json())
+
+    # '/aweme/v1/web/commit/item/digg/'
+    def test_commit_digg(self):
+        res = self.client.get('/aweme/v1/web/commit/item/digg/?aweme_id=7417840616874331455&type=1&item_type=0')
+        self.assertEqual(res.status_code, 200)
+        print('commit value:')
+        pprint(res.get_json())
+
 
 if __name__ == '__main__':
     unittest.main()
